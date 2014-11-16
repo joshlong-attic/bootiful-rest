@@ -19,22 +19,18 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.A
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
+import org.springframework.security.oauth2.provider.ClientDetails;
+import org.springframework.security.oauth2.provider.ClientDetailsService;
+import org.springframework.security.oauth2.provider.client.BaseClientDetails;
 
 /**
- * Easy to retreive an access token using
- *  <code>
- *   curl -X POST -vu acme:acmesecret http://localhost:8002/auth/oauth/token -H Accept: application/json -d password=password&username=jlong&grant_type=password&scope=read&client_secret=acmesecret&client_id=acme
- *  </code>
- *
+ * Easy to retrieve an access token using:
+ * {@code curl -X POST -vu acme:acmesecret http://localhost:8002/auth/oauth/token -H Accept: application/json -d password=password&username=jlong&grant_type=password&scope=read&client_secret=acmesecret&client_id=acme }
+ * <p/>
  * Then, send the access token to an OAuth2 secured REST resource using:
+ * {@code curl http://localhost:8080/api -H "Authorization: Bearer _INSERT TOKEN_}
  *
- * <CODE>
- *  curl http://localhost:8080/api -H "Authorization: Bearer _INSERT TOKEN_
- * </CODE>
- *
- *
- * @author  Josh Long
- *
+ * @author Josh Long
  */
 @Configuration
 @ComponentScan
@@ -47,19 +43,33 @@ public class Application {
 
     @Bean
     UserDetailsService userDetailsService(JdbcTemplate jdbcTemplate) {
-        RowMapper<User> userRowMapper = (resultSet, i) -> {
-            boolean enabled = resultSet.getBoolean("ENABLED");
-            return new User(
-                    resultSet.getString("ACCOUNT_NAME"),
-                    resultSet.getString("PASSWORD"),
-                    enabled,
-                    enabled,
-                    enabled,
-                    enabled,
-                    AuthorityUtils.createAuthorityList("ROLE_USER", "ROLE_ADMIN")
-            );
+        RowMapper<User> userRowMapper = (rs, i) -> new User(
+                rs.getString("ACCOUNT_NAME"),
+                rs.getString("PASSWORD"),
+                rs.getBoolean("ENABLED"),
+                rs.getBoolean("ENABLED"),
+                rs.getBoolean("ENABLED"),
+                rs.getBoolean("ENABLED"),
+                AuthorityUtils.createAuthorityList("ROLE_USER", "ROLE_ADMIN"));
+
+        return username -> jdbcTemplate.queryForObject(
+                "select * from ACCOUNT where ACCOUNT_NAME = ?", userRowMapper, username);
+    }
+
+    @Bean
+    ClientDetailsService clientDetailsService(JdbcTemplate jdbcTemplate) {
+        RowMapper<ClientDetails> clientDetailsRowMapper = (rs, i) -> {
+            BaseClientDetails baseClientDetails = new BaseClientDetails(
+                    rs.getString("CLIENT_ID"),
+                    rs.getString("RESOURCE_IDS"),
+                    rs.getString("SCOPES"),
+                    rs.getString("GRANT_TYPES"),
+                    rs.getString("AUTHORITIES"));
+            baseClientDetails.setClientSecret(rs.getString("CLIENT_SECRET"));
+            return baseClientDetails;
         };
-        return username -> jdbcTemplate.queryForObject("select * from ACCOUNT where ACCOUNT_NAME = ?", userRowMapper, username);
+        return clientId -> jdbcTemplate.queryForObject(
+                "select * from CLIENT_DETAILS where CLIENT_ID=?", clientDetailsRowMapper, clientId);
     }
 
     @Bean
@@ -78,13 +88,12 @@ public class Application {
         @Autowired
         private AuthenticationManager authenticationManager;
 
+        @Autowired
+        private ClientDetailsService clientDetailsService;
+
         @Override
         public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-            clients.inMemory()
-                    .withClient("acme")
-                    .secret("acmesecret")
-                    .authorizedGrantTypes("authorization_code", "refresh_token", "password")
-                    .scopes("read");
+            clients.withClientDetails(clientDetailsService);
         }
 
         @Override
@@ -96,6 +105,5 @@ public class Application {
         public void configure(AuthorizationServerSecurityConfigurer oauthServer) throws Exception {
             oauthServer.checkTokenAccess("permitAll()");
         }
-
     }
 }
