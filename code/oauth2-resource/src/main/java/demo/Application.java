@@ -12,18 +12,19 @@ import org.springframework.web.bind.annotation.RestController;
 @Configuration
 @ComponentScan
 @EnableAutoConfiguration
-@RestController
 @EnableOAuth2Resource
 public class Application {
-
-    @RequestMapping("/hi/{name}")
-    public String hi(@PathVariable String name) {
-        return "Hello, " + name + "!";
-    }
 
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
     }
 }
 
+@RestController
+class ApiController {
 
+    @RequestMapping("/hi/{name}")
+    String hi(@PathVariable String name) {
+        return "Hello, " + name + "!";
+    }
+}
