@@ -13,7 +13,7 @@ oauth2:
   resource:
     tokenInfoUri: http://localhost:8002/auth/oauth/check_token
     id: openid
-    serviceId: ${PREFIX:}resource
+    serviceId: resource
 logging:
   level:
     org.springframework.security: DEBUG

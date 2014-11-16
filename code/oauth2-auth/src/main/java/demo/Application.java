@@ -22,15 +22,14 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
 
 /**
  * Easy to retreive an access token using
- *  {@code
+ *  <code>
  *   curl -X POST -vu acme:acmesecret http://localhost:8002/auth/oauth/token -H Accept: application/json -d password=password&username=jlong&grant_type=password&scope=read&client_secret=acmesecret&client_id=acme
- * } 
+ *  </code>
  *
  * Then, send the access token to an OAuth2 secured REST resource using:
  *
  * <CODE>
- *     curl http://localhost:8080/api -H "Authorization: Bearer _INSERT TOKEN_
- *
+ *  curl http://localhost:8080/api -H "Authorization: Bearer _INSERT TOKEN_
  * </CODE>
  *
  *
