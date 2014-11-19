@@ -21,7 +21,11 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.ClientDetails;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
+import org.springframework.security.oauth2.provider.ClientRegistrationException;
 import org.springframework.security.oauth2.provider.client.BaseClientDetails;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * Easy to retrieve an access token using:
@@ -43,13 +47,15 @@ public class Application {
 
     @Bean
     UserDetailsService userDetailsService(JdbcTemplate jdbcTemplate) {
-        RowMapper<User> userRowMapper = (rs, i) -> new User(
-                rs.getString("ACCOUNT_NAME"),
-                rs.getString("PASSWORD"),
-                rs.getBoolean("ENABLED"),
-                rs.getBoolean("ENABLED"),
-                rs.getBoolean("ENABLED"),
-                rs.getBoolean("ENABLED"),
+
+        RowMapper<User> userRowMapper = (rs, i) ->
+                new User(
+                    rs.getString("ACCOUNT_NAME"),
+                    rs.getString("PASSWORD"),
+                    rs.getBoolean("ENABLED"),
+                    rs.getBoolean("ENABLED"),
+                    rs.getBoolean("ENABLED"),
+                    rs.getBoolean("ENABLED"),
                 AuthorityUtils.createAuthorityList("ROLE_USER", "ROLE_ADMIN"));
 
         return username -> jdbcTemplate.queryForObject(
@@ -58,6 +64,7 @@ public class Application {
 
     @Bean
     ClientDetailsService clientDetailsService(JdbcTemplate jdbcTemplate) {
+
         RowMapper<ClientDetails> clientDetailsRowMapper = (rs, i) -> {
             BaseClientDetails baseClientDetails = new BaseClientDetails(
                     rs.getString("CLIENT_ID"),
@@ -68,7 +75,7 @@ public class Application {
             baseClientDetails.setClientSecret(rs.getString("CLIENT_SECRET"));
             return baseClientDetails;
         };
-        return clientId -> jdbcTemplate.queryForObject(
+        return  clientId -> jdbcTemplate.queryForObject(
                 "select * from CLIENT_DETAILS where CLIENT_ID=?", clientDetailsRowMapper, clientId);
     }
 
