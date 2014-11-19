@@ -1,0 +1,24 @@
+{
+  "name": "fabulous",
+  "version": "0.0.1",
+  "authors": [
+    "Brian Cavalier <brian@hovercraftstudios.com>"
+  ],
+  "main": "fabulous.js",
+  "moduleType": ["node"],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests",
+    "package.json"
+  ],
+  "dependencies": {
+    "jiff": "~0.6",
+    "rest": "~1.2",
+    "when": "~3.5",
+    "most": "~0.8"
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "name": "most",
+  "main": "most.js",
+  "version": "0.8.6",
+  "homepage": "https://github.com/cujojs/most",
+  "authors": [
+    "Brian Cavalier <brian@hovercraftstudios.com>"
+  ],
+  "description": "Async monadic streams",
+  "moduleType": [
+    "node"
+  ],
+  "keywords": [
+	"reactive",
+	"reactive programming",
+	"reactive streams",
+	"stream",
+	"streams",
+	"event stream",
+	"promise",
+	"promises",
+	"monad",
+	"monadic",
+	"functional",
+	"async",
+	"cujojs",
+	"cujo"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "examples",
+    "test",
+    "tests",
+    "package.json"
+  ],
+  "dependencies": {
+    "when": "~3.5"
+  }
+}

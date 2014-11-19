@@ -1,0 +1,38 @@
+{
+  "name": "jiff",
+  "main": "jiff.js",
+  "version": "0.6.0",
+  "authors": [
+    "Brian Cavalier <brian@hovercraftstudios.com>"
+  ],
+  "description": "JSON diff and patch based on rfc6902",
+  "moduleType": [
+    "node"
+  ],
+  "keywords": [
+    "json",
+    "json patch",
+    "rfc6902",
+    "diff",
+    "patch",
+    "json pointer"
+  ],
+  "license": "MIT",
+  "homepage": "http://cujojs.com",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "experiments"
+  ],
+  "_release": "0.6.0",
+  "_resolution": {
+    "type": "version",
+    "tag": "0.6.0",
+    "commit": "b73bcf2e627a5d96ed9059cbcf9bed9f8c6c7911"
+  },
+  "_source": "git://github.com/cujojs/jiff.git",
+  "_target": "~0.6",
+  "_originalSource": "jiff"
+}
